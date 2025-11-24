@@ -1,8 +1,9 @@
-package pl.vbstats.User.Model;
+package pl.vbstats.user.Model;
 
+import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-import pl.vbstats.Club.Model.Address;
+import pl.vbstats.club.Model.Address;
 
 import java.time.LocalDate;
 
@@ -40,5 +41,8 @@ public class UserRegisterRequest {
     private LocalDate birthDate;
 
     private Address address;
+
+    @Enumerated
+    private UserRole role;
 
 }

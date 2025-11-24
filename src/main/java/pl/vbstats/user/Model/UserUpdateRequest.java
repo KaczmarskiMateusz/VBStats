@@ -1,4 +1,4 @@
-package pl.vbstats.User.Model;
+package pl.vbstats.user.Model;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
@@ -6,7 +6,7 @@ import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import pl.vbstats.Club.Model.Address;
+import pl.vbstats.club.Model.Address;
 
 import java.time.LocalDate;
 
