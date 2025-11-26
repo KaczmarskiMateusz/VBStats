@@ -11,7 +11,6 @@ import pl.vbstats.user.Model.UserMapper;
 import pl.vbstats.user.Model.UserRegisterRequest;
 import pl.vbstats.user.Repository.UserRepository;
 import pl.vbstats.user.Service.UserService;
-import pl.vbstats.user.exceptions.UserExistsExceptions;
 import pl.vbstats.user.exceptions.UserNotAuthorizedException;
 import pl.vbstats.user.exceptions.UserNotFoundException;
 
@@ -38,18 +37,17 @@ public class AuthServiceImpl implements AuthService {
         return AuthenticationResponse.builder()
                 .token(token)
                 .user(createdUser)
-                .externalId(createdUser.getExternalId())
                 .build();
     }
 
     @Override
     public AuthenticationResponse login(AuthenticationRequest request) {
 
-        UserEntity userEntity = userRepository.findByLogin(request.login())
+        UserEntity userEntity = userRepository.findByUsernameOrEmailIgnoreCase(request.login(), request.login())
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(request.password(), userEntity.getPassword())) {
-            throw new UserNotAuthorizedException("Wrong password or login");
+            throw new UserNotAuthorizedException("Wrong password or username");
         }
 
         String token = jwtService.generateToken(
@@ -60,7 +58,6 @@ public class AuthServiceImpl implements AuthService {
 
         return AuthenticationResponse.builder()
                 .token(token)
-                .externalId(userEntity.getExternalId())
                 .user(userMapper.toDto(userEntity))
                 .build();
     }
