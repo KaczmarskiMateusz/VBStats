@@ -6,14 +6,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import pl.vbstats.config.AuthenticationResponse;
 import pl.vbstats.config.JwtAuthFilter;
 import pl.vbstats.user.Model.ResetPasswordRequest;
 import pl.vbstats.user.Model.UserDto;
-import pl.vbstats.user.Model.UserRegisterRequest;
 import pl.vbstats.user.Service.UserService;
 
-import java.net.URI;
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -22,13 +20,6 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
-
-    @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@Valid @RequestBody UserRegisterRequest request) {
-        AuthenticationResponse response = userService.createUser(request);
-        URI location = URI.create("/app/users/mainDashboard?" + response.getExternalId());
-        return ResponseEntity.created(location).body(response);
-    }
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{externalId}")
@@ -88,6 +79,12 @@ public class UserController {
     public ResponseEntity<Void> disableUser(@PathVariable UUID externalId) {
         userService.disableUser(externalId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/findAllOwners")
+    public ResponseEntity<List<UserDto>> findAllOwners() {
+        return ResponseEntity.ok().body(userService.findAll());
     }
 
 }
