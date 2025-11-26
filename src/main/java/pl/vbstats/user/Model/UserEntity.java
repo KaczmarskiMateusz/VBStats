@@ -1,21 +1,29 @@
-package pl.vbstats.User.Model;
+package pl.vbstats.user.Model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import pl.vbstats.Club.Model.Address;
+import pl.vbstats.club.Model.Address;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "users")
+@Table(
+        name = "users",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "uk_user_external_id", columnNames = "externalId"),
+                @UniqueConstraint(name = "uk_user_email", columnNames = "email"),
+                @UniqueConstraint(name = "uk_user_username", columnNames = "username"),
+                @UniqueConstraint(name = "uk_user_phone", columnNames = "phone")
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class UserEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -56,6 +64,7 @@ public class User {
 
     @PrePersist
     public void prePersist() {
+        externalId = UUID.randomUUID();
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
